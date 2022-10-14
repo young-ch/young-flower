@@ -6,6 +6,7 @@
     "serve": "vue-cli-service serve",
     "local": "vue-cli-service serve --mode=local",
     "development": "vue-cli-service serve --mode=development",
+    "build-dev": "vue-cli-service build --mode=development",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "dev": "npm run serve",
