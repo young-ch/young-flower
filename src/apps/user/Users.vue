@@ -127,17 +127,17 @@
           <div>{{ stateName(value) }}</div>
         </template>
 
-        <!--        <template v-slot:item.lastSignIn="{ item }">-->
-        <!--          <div>{{ item.lastSignIn | formatDate('lll') }}</div>-->
-        <!--        </template>-->
+               <!-- <template v-slot:item.lastSignIn="{ item }">
+                 <div>{{ item.lastSignIn | formatDate('lll') }}</div>
+               </template>
 
-        <!--        <template v-slot:item.action="{ }">-->
-        <!--          <div class="actions">-->
-        <!--            <v-btn icon to="/users/edit">-->
-        <!--              <v-icon>mdi-open-in-new</v-icon>-->
-        <!--            </v-btn>-->
-        <!--          </div>-->
-        <!--        </template>-->
+               <template v-slot:item.action="{ }">
+                 <div class="actions">
+                   <v-btn icon to="/users/edit">
+                     <v-icon>mdi-open-in-new</v-icon>
+                   </v-btn>
+                 </div>
+               </template> -->
         <!--        -->
         <template #footer.page-text="props">
 

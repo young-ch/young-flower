@@ -13,8 +13,10 @@ export function intercept($store) {
     //         })
     //     }
     // }, 1000);
+
     const refresh = (config)=> {
         const access_token = getToken();
+
         if (access_token && jwt_decode(access_token).exp > Date.now() / 1000) {
             return axios.request(config);
         } else {

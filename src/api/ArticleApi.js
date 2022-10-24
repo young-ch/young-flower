@@ -14,7 +14,12 @@ class ArticleApi {
 
 
   findById(boardId, id) {
-    return axios.get(`${this.endpoint}/boards/${boardId}/articles/${id}`, {}).then(response=>response.data);
+    return axios.get(`${this.endpoint}/boards/${boardId}/articles/${id}`, {}).then(response => {
+      
+      return response.data
+      
+      
+    });
   }
 
   save(article, files) {
@@ -40,6 +45,10 @@ class ArticleApi {
   }
 
   downloadFile(boardId, id, fileId) {
+
+    console.log(boardId);
+    console.log(id);
+    console.log(fileId);
     // return axios.get(`${this.endpoint}/board/${boardId}/article/${id}/file/${fileId}`, {}).then(response=>response);
     return axios.get(`${this.endpoint}/boards/${boardId}/articles/${id}/files/${fileId}/download`, {responseType: 'arraybuffer'}).then(response=>response);
   }

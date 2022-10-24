@@ -60,6 +60,10 @@ export default {
       type: Array,
       default: () => []
     }
+  },
+  created(){
+   
+
   }
 }
 </script>

@@ -81,23 +81,27 @@ export default {
     }
   },
   async created() {
-
-    // console.log(this.menuItem)
     const roles = this.$store.state.user?.roles??[]
     const permittedMenus = this.$store.state.user?.menus??[]
     // console.log(permittedMenus)
 
     // 1 is administrator role
-    this.authorized = roles.includes("1")
+    //console.log(this.menuItem);
+
+    this.authorized = roles.includes("1");
+
+
     if(!this.authorized)
       this.authorized = permittedMenus.includes(this.menuItem.id) && this.menuItem.activated
-
+      
     // this.opened = menuItem.value ? menuItem.value : menuItem.regex ? menuItem.regex.test($route.path) : false
 
     // this.opened = this.menuItem.regex ? new this.menuItem.regex.test(this.$route.path) : false
+
+    //해당 소스가 반복하면서 메뉴를 생성해주는 것 같음.?
     this.opened = this.menuItem?.items?.map(m => m.link === this.$route.path).includes(true)??false
-    // console.log(this.opened)
-    // console.log(this.menuItem.items.map(m => m.link.test(this.$route.path)))
+     
+  
 
     // console.log(this.$store.state.user)
     // console.log(this.menuItem)

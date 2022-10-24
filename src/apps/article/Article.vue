@@ -80,6 +80,9 @@ export default {
       this.isSchedule = this.board.boardType === 'TYPE_SCHEDULE';
 
       this.permission = await boardApi.findAssignedPermissionId(this.boardId)
+      
+
+
       // console.log(this.permission)
       // const boardWritePermissionRoleIds = [...new Set(this.board.boardPermissions.map(bp => bp.id).filter(p => p.functionType === "WRITE" || p.functionType === "ADMIN").map(p => p.roleId))]
       // const boardReadPermissionRoleIds = [...new Set(this.board.boardPermissions.map(bp => bp.id).filter(p => p.functionType === "READ" || p.functionType === "ADMIN").map(p => p.roleId))]

@@ -29,7 +29,7 @@
                  class="d-flex child-flex">
             <v-card max-width="200" class="mx-auto">
               <v-img
-                  :src="item.mainImage.thumbnail ? `${attachmentPath}/board/${item.boardId}/${item.mainImage.thumbnail}` : `${attachmentPath}/board/${item.boardId}/${item.mainImage.fileServerName}`"
+                  :src="item.mainImage.thumbnail ? `${staticattachmentPath}/board/${item.boardId}/${item.mainImage.thumbnail}` : `${testattachmentPath}/board/${item.boardId}/${item.mainImage.fileServerName}`"
                   v-on:error.once="item.mainImage.thumbnail='/photo_default.jpg'"
                   aspect-ratio="1"
                   class="grey lighten-2 white--text align-end"
@@ -104,6 +104,8 @@ export default {
     // endPoint:process.env.VUE_APP_ATTACH_FILE_SERVER_URL,
     endPoint:process.env.VUE_APP_HOME,
     attachmentPath:process.env.VUE_APP_ATTACH_FILE_SERVER_URL,
+    staticattachmentPath:process.env.VUE_APP_ATTACH_STATIC_PATH,
+    
     monthLists: [
       {value: 1, text: '1개월'}, {value: 3, text: '3개월'}, {value: 6, text: '6개월'},
       {value: 12, text: '1년'}, {value: 0, text: '전체'}],
@@ -210,6 +212,8 @@ export default {
           return a;
         });
 
+        console.log(this.articles );
+
         this.paginationLength = Math.ceil(this.totalItems/this.param.size);
         this.$store.commit('setParams', params);
       });
@@ -227,14 +231,21 @@ export default {
     }
   },
   created: function () {
+
     this.search();
     roleApi.getRoles(true).then(data => {
       this.boardRoleItems = data;
     });
+
     boardApi.findById(this.boardId).then(data => {
       this.board = data;
       this.categoryItems = (data.boardCategories??[]).length > 0 ? data.boardCategories : null;
+
+      console.log( this.board);
+      
     });
+
+    
 
     const storedParams = this.$store.getters?.params??{};
     if(storedParams.name !== this.$options.name)
@@ -243,6 +254,7 @@ export default {
       this.options = storedParams
       this.param = storedParams
     }
+   
 
     // console.log(this.$store.state.currentMenu)
     // console.log(this.$store.getters.menu)

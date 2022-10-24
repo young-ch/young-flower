@@ -437,6 +437,8 @@ export default {
     async changeTreeData(menuCategory) {
       this.$refs?.menuForm?.resetValidation();
 
+      console.log(this.$refs.menuForm);
+
       this.menu = {
         menuCategory: menuCategory
       }
@@ -471,6 +473,8 @@ export default {
       }
     },
     async createMenuForm() {
+      console.log(this.menu.menuCategory);
+
       this.menu = {
         menuCategory: this.menu.menuCategory ?? 'HOME'
       }
@@ -576,6 +580,7 @@ export default {
       await menuApi.moveMenu(sourceNode.data.id, destinationNode.data.id, position.get(pos));
     },
     flatList(items) {
+      console.log(items);
       if(items && items.length > 0) {
         return items.flatMap(i => {
 

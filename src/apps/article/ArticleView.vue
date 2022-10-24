@@ -92,6 +92,7 @@
                 <div v-if="article.articleAttachments">
                   <v-row v-for="f in article.articleAttachments" v-bind:key="f.id" class="ma-2">
                     <v-btn text  @click.prevent="downloadFile(f)"><v-icon>{{ f.contentType.indexOf('image') === 0 ? 'mdi-image' : 'mdi-file' }}</v-icon>
+                    
                       <v-tooltip bottom v-if="f.contentType.indexOf('image') === 0">
                         <template v-slot:activator="{ on, attrs }">
                           <span
@@ -156,16 +157,35 @@
             </v-row>
           </v-form>
         </v-card-text>
-
+       <div class="hd-box" >댓글 <em>{{ commentsCnt }}</em></div> 
         <v-card-actions v-if="permission.commentable">
           <v-spacer></v-spacer>
           <v-btn class="vBtn" color="indigo" dark @click="saveComment">
             <v-icon left>mdi mdi-content-save</v-icon>
             댓글 등록
           </v-btn>
+        
         </v-card-actions>
-
-        <v-card-text>
+                <Comment
+                  v-for="(comment, key) in comments"
+                  :key="key"
+                  :id="comment.id"
+                  :createId="comment.createdBy"
+                  :author="comment.writer"
+                  :date="comment.createdAt"
+                  :content="comment.contents"
+                  :children="comment.childrenList"
+                  :totalChildren="comment.totalChildren"
+                  :isDeleted="comment.deleted"
+                  :upcomment="comment" 
+                  :reCommentIndex="reCommentIndex"
+                  :isVisibleCommentUpdateForm="isVisibleCommentUpdateForm"
+                  :isVisibleReplyEditor="isVisibleReplyEditor"
+                  @submit:reply="onSubmitReply"
+                  @update:comment="onUpdateReply"
+                  @remove="onClickRemoveComment" 
+                ></Comment>
+        <!-- <v-card-text>
           <v-form ref="formListComment">
             <v-data-table
               :headers="commentHeaders"
@@ -223,7 +243,7 @@
 
             </v-data-table>
           </v-form>
-        </v-card-text>
+        </v-card-text> -->
 
       </v-card>
 
@@ -244,6 +264,7 @@ import ViewerQuill from "@/components/editor/ViewerQuillComponent";
 import _ from 'lodash'
 
 import moment from "moment";
+import Comment from '@/apps/component/Comment';
 
 
 
@@ -251,9 +272,13 @@ import moment from "moment";
 export default {
   name: "ArticleForm",
   components: {
-    ViewerQuill
+    ViewerQuill,
+    Comment
   },
-  props: ['id',  'boardId'],
+  props: {
+      id: String,
+      boardId : String, 
+     },
   computed: {
     breadcrumbs() {
       return [
@@ -288,15 +313,31 @@ export default {
       always: true,
       customDate: null
     },
-    comment: {
+    // comment: {
+    //   content: null,
+    //   writer: null,
+    //   createdAt: null,
+    //   createdBy: null,
+    // },
+    recomment: {
+      contents:""
+    },
+    tempcomment: {
       content: null,
       writer: null,
       createdAt: null
     },
     commentHeaders: [{value: 'writer'}, {value : 'contents'}, {value: 'actions'}],
     comments:[],
+    comment: {
+      contents:""
+    },
     totalItems:0,
     options:{},
+    reCommentIndex : -1, 
+    commentIndex: -1,
+    isVisibleCommentUpdateForm : false,
+    isVisibleReplyEditor:false,
     period:null,
     apiEndPoint:process.env.VUE_APP_BASE_API,
     endPoint:process.env.VUE_APP_ATTACH_FILE_SERVER_URL,
@@ -304,7 +345,9 @@ export default {
       required: value => !!value || '필수 입력 항목입니다..',
       iso8601: value => (!value || !!/([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))$/.test(value)) || '날짜 형식이 아닙니다.'
     },
-    editComment: {},
+    editComment: {
+      contents:""
+    },
     permission: {}
   }),
   watch: {
@@ -314,6 +357,8 @@ export default {
       },
       deep: true,
     }
+
+    
   },
   methods: {
     reaction() {
@@ -348,6 +393,38 @@ export default {
           alert(error.status);
       });
     },
+    onClickRemoveComment(id){ 
+      if(confirm('지금 삭제하시면 \n내용을 복구할 수 없습니다. 삭제하시겠습니까?')) {
+        commentApi.delete(this.article.boardId, id).then(() => {
+          this.search();
+        });
+      }
+    },  
+    onUpdateReply(editreply, id, upcomment){   
+      console.log(upcomment);
+      this.recomment = upcomment;
+      let tempContents = editreply;
+      if(tempContents.length==0){
+        return alert('댓글을 한 글자 이상 입력해주세요.')
+      }
+
+      this.recomment.articleId = this.article.id;
+      this.recomment.boardId = this.article.boardId;
+      this.recomment.commentId = id; 
+      this.recomment.contents = tempContents; 
+      this.recomment.updateAt = null;
+  
+      commentApi.save(this.article.boardId, this.article.id, this.recomment).then(() => {
+
+
+        this.editreply = "";
+        this.recomment.contents = "";
+        this.reCommentIndex = -1;
+        this.recomment.upperCommentId = "";
+        this.isVisibleCommentUpdateForm = false;
+        this.search();
+      }) 
+    },   
     goList() {
       this.$router.push({path: `/boards/${this.boardId}/articles`})
     },
@@ -359,6 +436,7 @@ export default {
         });
       }
     },
+    
     updateForm(item) {
       this.$router.push({path:`/boards/${item.boardId}/articles/${item.id}/form`});
     },
@@ -369,10 +447,20 @@ export default {
       // this.comment.createdAt = this.comment.createdAt ? this.comment.createdAt + "T00:00:00" : null;
       commentApi.save(this.boardId, this.id, this.comment).then(() => {
         this.comment.contents = null;
+        
+        
         // this.comment.createdAt = null;
         this.$refs.formComment.resetValidation()
         // this.$refs.formComment.reset();
         // this.comment.writer = this.$store.state.user.username;
+        //this.contents = "";
+        this.reply = "";
+        this.isVisibleReplyEditor = false;
+        this.recomment.contents = "";
+       
+        this.recomment.upperCommentId = "";
+        this.o_contents = ""; 
+
         this.search();
       }).catch(error => {
         this.comment.createdAt = this.comment.createdAt.substr(0, 10);
@@ -380,20 +468,64 @@ export default {
       });
     },
     async updateComment() {
+
       if (!await this.$refs.formListComment.validate())
         return;
+
+        // this.tempcomment = this.editComment
+        // console.log(this.tempcomment.contents);
 
       if(confirm('댓글을 수정하시겠습니까?')) {
         commentApi.save(this.boardId, this.id, this.editComment).then(() => {
           this.$refs.formComment.resetValidation();
           (this.comments.filter(c => c.commentId === this.editComment.commentId)?.[0] ?? {}).contents = this.editComment.contents;
           this.editComment = {};
+          this.search();
         });
       }
     },
+    onSubmitReply(reply, id){  
+
+      console.log(reply);//현재 댓글 쓴 결과.
+      console.log(id); //현재 상위 댓글 ID
+
+      this.recomment = this.comment; 
+      let tempContents = reply;
+      if(tempContents.length==0){
+        return alert('댓글을 한 글자 이상 입력해주세요.')
+      } 
+
+      this.recomment.articleId = this.article.id;
+      this.recomment.boardId = this.article.boardId;
+      this.recomment.upperCommentId = id;
+      this.recomment.commentId = null;
+      this.recomment.createdAt = null; 
+      //console.log(" this.tempContents ---- ")
+      //console.log( tempContents)
+      //console.log(this.recomment.contents)
+      //console.log(" this.recomment ---- ")
+      //console.log(this.recomment)
+      this.comment.contents = "";
+      this.recomment.contents = tempContents; 
+      //console.log(" this.recomment ---- ")
+      //console.log(this.recomment)
+
+      commentApi.save(this.article.boardId, this.id, this.recomment).then(() => {
+        this.contents = "";
+        this.reply = "";
+        this.isVisibleReplyEditor = false;
+        this.recomment.contents = "";
+        this.reCommentIndex = -1;
+        this.recomment.upperCommentId = "";
+        this.comment.contents = "";
+        this.o_contents = ""; 
+        this.search();
+      }) 
+    },
+
     updateCommentForm(item) {
       this.editComment = _.cloneDeep(item);
-      console.log(item)
+     
     },
     cancelComment() {
       this.editComment = {};
@@ -414,26 +546,38 @@ export default {
             size: size ? size : itemsPerPage
           }
         };
-        commentApi.findAllByArticleId(this.article.boardId, this.id, params).then(data => {
+        commentApi.list(this.article.boardId, this.id, params).then(data => {
           // console.log(data);
           this.totalItems = data.totalElements;
           this.comments = data.content;
+
+       
+
         });
+
+        commentApi.total(this.article.boardId, this.article.id).then(data => {
+          //갯수 안맞아서 수정함
+          this.commentsCnt = data;
+        });
+
+
       }
     }
 
   },
   async created() {
 
+    console.log(this.id);
+
     if(this.id) {
       this.permission = await boardApi.findAssignedPermissionId(this.boardId, {articleId: this.id})
 
       articleApi.findById(this.boardId, this.id).then(async data => {
 
-        // console.log(data);
+
         this.article = data;
 
-        this.comment.articleId = this.article.articleId;
+        this.comment.articleId = this.article.id;
         this.comment.boardId = this.article.boardId;
 
         this.search();
@@ -451,6 +595,7 @@ export default {
 
     boardApi.findById(this.boardId).then(async data => {
       this.board = data;
+
       if (!this.articleId)
         this.permission = await boardApi.findAssignedPermissionId(this.boardId)
     });
@@ -459,3 +604,4 @@ export default {
   }
 }
 </script>
+
