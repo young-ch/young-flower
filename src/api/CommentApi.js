@@ -33,6 +33,7 @@ class CommentApi {
   }
 
   delete(boardId, articleId, commentId) {
+
     return axios.delete(`${this.endpoint}/boards/${boardId}/articles/${articleId}/comments/${commentId}`, {}).then(response=>response.data);
   }
 

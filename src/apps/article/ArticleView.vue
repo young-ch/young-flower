@@ -395,8 +395,9 @@ export default {
       });
     },
     onClickRemoveComment(id){ 
+        
       if(confirm('지금 삭제하시면 \n내용을 복구할 수 없습니다. 삭제하시겠습니까?')) {
-        commentApi.delete(this.article.boardId, id).then(() => {
+        commentApi.delete(this.article.boardId, this.comment.articleId ,id ).then(() => {
           this.search();
         });
       }
