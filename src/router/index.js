@@ -16,6 +16,8 @@ import PolicyRoutes from './policy.routes'
 import MenuRoutes from './menu.routes'
 import SettingRoutes from './setting.routes'
 import ContentRoutes from './content.routes'
+import historystoryRoutes from './historystory.routes'
+
 
 Vue.use(Router)
 
@@ -47,6 +49,7 @@ export const routes = [
 ...MenuRoutes,
 ...SettingRoutes,
 ...ContentRoutes,
+...historystoryRoutes,
 {
   path: '/blank',
   name: 'blank',
