@@ -158,7 +158,7 @@
                     </template>
 
                     <span>
-                      <v-img :src="`/attachment/${f.fileContextPath}${f.thumbnail}`" max-height="200" max-width="200"/>
+                      <v-img :src="`${staticattachmentPath}${f.fileContextPath}${f.thumbnail}`" max-height="200" max-width="200"/>
                     </span>
                   </v-tooltip>
                   <span v-else>{{ f.fileRealName }}</span>
@@ -199,6 +199,7 @@
 </template>
 
 <script>
+
 import articleApi from '@/api/ArticleApi'
 import boardApi from '@/api/BoardApi'
 
@@ -227,6 +228,7 @@ export default {
     boardId: String
   },
   data: () => ({
+    staticattachmentPath:process.env.VUE_APP_ATTACH_STATIC_PATH,
     rules: {
       required: value => !!value || '필수 입력 항목입니다..',
       length12: value => value && value.length > 12 || '필수 입력 항목입니다.',

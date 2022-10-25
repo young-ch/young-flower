@@ -104,7 +104,7 @@
                         </template>
 
                         <span>
-                          <v-img :src="`/attachment/${f.fileContextPath}${f.thumbnail}`" max-height="200" max-width="200"/>
+                          <v-img :src="`${staticattachmentPath}${f.fileContextPath}${f.thumbnail}`" max-height="200" max-width="200"/>
                         </span>
                       </v-tooltip>
                       <span v-else>{{ f.fileRealName }}</span>
@@ -305,6 +305,7 @@ export default {
     }
   },
   data: () => ({
+    staticattachmentPath:process.env.VUE_APP_ATTACH_STATIC_PATH,
     board:{},
     article: {
       title: null,
