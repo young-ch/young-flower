@@ -101,9 +101,11 @@ export default {
     //해당 소스가 반복하면서 메뉴를 생성해주는 것 같음.?
     this.opened = this.menuItem?.items?.map(m => m.link === this.$route.path).includes(true)??false
      
-  
 
+  
+    // console.log("--------------userInfo------------------")
     // console.log(this.$store.state.user)
+    // console.log("--------------menuItem------------------")
     // console.log(this.menuItem)
   }
 }

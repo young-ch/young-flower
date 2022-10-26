@@ -53,9 +53,9 @@ class ArticleApi {
     return axios.get(`${this.endpoint}/boards/${boardId}/articles/${id}/files/${fileId}/download`, {responseType: 'arraybuffer'}).then(response=>response);
   }
 
-  reaction(id, boardId){
-    return axios.post(`${this.endpoint}/boards/${boardId}/articles/${id}/reaction`, {}).then(response => response);
-  }
+  // reaction(id, boardId){
+  //   return axios.post(`${this.endpoint}/boards/${boardId}/articles/${id}/reaction`, {}).then(response => response);
+  // }
 
 }
 

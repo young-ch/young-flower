@@ -43,6 +43,18 @@ class HistoryStoryApi {
     return axios.get(`${this.endpoint}/boards/${boardId}/articles/${id}/files/${fileId}/download`, {responseType: 'arraybuffer'}).then(response=>response);
   }
 
+  changeOrder(historyId, body){
+  
+    
+    // return axios.delete(`${this.endpoint}/region/${idx}?userId=${userId}`, {}).then((response) => response.data);
+
+  return axios.put(`${this.endpoint}/diary/${historyId}/enquete/index/orders`, body).then((response) => {response.data
+  
+    
+    return response.data;
+  });
+}
+
   // reaction(id, boardId){
   //   return axios.post(`${this.endpoint}/boards/${boardId}/articles/${id}/reaction`, {}).then(response => response);
   // }

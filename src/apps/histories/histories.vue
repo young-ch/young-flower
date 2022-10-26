@@ -12,7 +12,7 @@
     </div>
 
     <v-row>
-      <v-col cols="11">
+      <v-col cols="12">
       <v-data-table
               :headers="headers"
               :items="historylist"
@@ -50,10 +50,10 @@
                   </td> -->
                   <td>{{ item.content }}</td>
                   <td style="text-align: center">
-                    <v-btn style="margin-right:5px" color="primary" type="button" v-bind:disabled="item.isDeleted != '' "  @click.stop="updateEnquete(item)">
+                    <v-btn style="margin-right:5px" color="primary" type="button" >
                       수정
                     </v-btn>
-                    <v-btn color="error" type="button" @click="handleDeleteIcon(item)" v-if="item.isDeleted != true" @click.stop="deleteDialog = true; saveEnquete.id = item.id; saveEnquete.name = item.title; ">
+                    <v-btn color="error" type="button" >
                       삭제
                     </v-btn>           
                   </td>
@@ -70,7 +70,7 @@
 
 <script>
 import PopupApi from '../../api/PopupApi';
-import HistoryStoryApi from '../../api/HistoryStoryApi';
+import HistoryStoryApi from '../../api/HistoriesApi';
 import Draggable from 'vuedraggable';
 import rules from "@/utils/rules";
 import _ from "lodash";
@@ -146,10 +146,6 @@ export default {
 
         HistoryStoryApi.list().then(data => {
 
-          console.log(data);
-
-          
-
         //this.totalItems = data.totalElements;
         this.historylist = data;
           // this.datasets = data.map(b => {
@@ -202,7 +198,31 @@ export default {
 
       dialog.value = false
     },
+    async handleChangeOrders({ moved }){
+      
+      console.log(moved.oldIndex);
+      
+      try {
+      const target = { ...moved.element };
+      const original = { ...this.historylist[moved.newIndex] };
+      let { orderNo } = original;
+      target.orderNo = orderNo;
 
+      console.log(moved.element.id  );
+      console.log(target);
+
+       //await HistoryStoryApi.changeOrder(moved.element.id ,target);
+       await this.search();
+
+    
+
+      } catch (e) {
+        const { message } = e;
+        this.$dialog({ title: '정렬 실패', message });
+      }
+
+    
+    },
     deleteCategory(data) {
       if (confirm('삭제 하시겠습니까?')) {
         HistoryStoryApi.delete(data.id).then(() => {
@@ -214,7 +234,6 @@ export default {
   },
   created() {
 
-    console.log("tsdfsdf");
     this.search();
 
   }
