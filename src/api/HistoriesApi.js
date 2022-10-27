@@ -1,7 +1,7 @@
 import axios from 'axios';
 import {clarify} from "@/utils/clear"
 
-class HistoryStoryApi {
+class HistoriesApi {
   constructor() {
     this.endpoint = process.env.VUE_APP_GW_URL;
   }
@@ -42,6 +42,7 @@ class HistoryStoryApi {
     // return axios.get(`${this.endpoint}/board/${boardId}/article/${id}/file/${fileId}`, {}).then(response=>response);
     return axios.get(`${this.endpoint}/boards/${boardId}/articles/${id}/files/${fileId}/download`, {responseType: 'arraybuffer'}).then(response=>response);
   }
+ 
 
   changeOrder(historyId, body){
   
@@ -62,4 +63,4 @@ class HistoryStoryApi {
 }
 
 
-export default new HistoryStoryApi();
+export default new HistoriesApi();

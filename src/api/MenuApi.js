@@ -8,6 +8,7 @@ class MenuApi {
   }
 
   findMenusByCategory(category) {
+    console.log(category);
     // let params = new URLSearchParams(body ? clarify(body) : body)
     return axios.get(`${this.endpoint}/menus?category=${category}`, {}).then(response => response.data);
   }

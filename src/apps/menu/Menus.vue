@@ -620,8 +620,10 @@ export default {
   },
   mounted() {
     this.loadTreeData('HOME').then(async data => {
+      console.log(data);
       this.menus = this.$refs.menuTree.tree.parse(data);
       // this.$set(this.$refs.menuTree, 'model', this.menus);
+      console.log(this.menus );
       this.$refs.menuTree.setModel(this.menus)
       this.$refs.menuTree.expandAll()
     });
